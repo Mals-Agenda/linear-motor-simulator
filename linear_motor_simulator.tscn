@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://vruwgf1holk7"]
+
+[ext_resource type="Script" uid="uid://140sdajjqm27" path="res://SimulationController.gd" id="1_1s5e0"]
+
+[node name="LinearMotorSimulator" type="Node3D" unique_id=2111386493]
+
+[node name="Bolt" type="RigidBody3D" parent="." unique_id=1894213821]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Bolt" unique_id=594503263]
+
+[node name="Barrel" type="StaticBody3D" parent="." unique_id=727439760]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Barrel" unique_id=1937083052]
+
+[node name="MagnetHold" type="Area3D" parent="." unique_id=1817538153]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MagnetHold" unique_id=521017085]
+
+[node name="Sensors" type="Node3D" parent="." unique_id=323941388]
+
+[node name="IRGateFront" type="Area3D" parent="Sensors" unique_id=615145059]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sensors/IRGateFront" unique_id=866299325]
+
+[node name="IRGateRear" type="Area3D" parent="Sensors" unique_id=1339792152]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sensors/IRGateRear" unique_id=347660271]
+
+[node name="SimulationController" type="Node" parent="." unique_id=1768305805]
+script = ExtResource("1_1s5e0")

@@ -1,0 +1,45 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://breach_door.gd" id="1"]
+
+[sub_resource type="CylinderShape3D" id="1"]
+radius = 0.075
+height = 0.02
+
+[sub_resource type="CylinderMesh" id="2"]
+top_radius = 0.075
+bottom_radius = 0.075
+height = 0.02
+radial_segments = 32
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="3"]
+albedo_color = Color(0.25, 0.25, 0.27, 1)
+
+[sub_resource type="CylinderMesh" id="4"]
+top_radius = 0.02
+bottom_radius = 0.02
+height = 0.018
+radial_segments = 16
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="5"]
+albedo_color = Color(0.8, 0.1, 0.1, 1)
+
+[node name="BreachDoor" type="StaticBody3D"]
+script = ExtResource("1")
+rotation = Vector3(0, 0, -1.5708)
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("1")
+
+[node name="DoorMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("2")
+surface_material_override/0 = SubResource("3")
+
+[node name="MagnetMesh" type="MeshInstance3D" parent="."]
+position = Vector3(0.019, 0, 0)
+mesh = SubResource("4")
+surface_material_override/0 = SubResource("5")

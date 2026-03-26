@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//storage/emulated/0/Documents/linear-motor-simulator/**)",
+      "Read(//data/data/**)",
+      "Bash(pm list:*)",
+      "Bash(echo $TMPDIR)",
+      "Bash(echo $HOME)"
+    ]
+  }
+}

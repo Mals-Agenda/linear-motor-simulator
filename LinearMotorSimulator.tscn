@@ -1,0 +1,178 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://SimulationController.gd" id="1"]
+[ext_resource type="Script" path="res://IRGateFront.gd" id="2"]
+[ext_resource type="Script" path="res://IRGateRear.gd" id="3"]
+[ext_resource type="Script" path="res://MagnetHold.gd" id="4"]
+[ext_resource type="Script" path="res://Capacitor.gd" id="5"]
+[ext_resource type="Script" path="res://Wire.gd" id="6"]
+
+[sub_resource type="CylinderShape3D" id="1"]
+radius = 0.04
+height = 0.8
+
+[sub_resource type="CylinderMesh" id="2"]
+top_radius = 0.02
+bottom_radius = 0.05
+height = 0.8
+
+[sub_resource type="StandardMaterial3D" id="3"]
+albedo_color = Color(0.9, 0.35, 0.05, 1)
+
+[sub_resource type="CylinderShape3D" id="4"]
+radius = 0.075
+height = 0.45
+
+[sub_resource type="StandardMaterial3D" id="5"]
+albedo_color = Color(0.38, 0.40, 0.43, 1)
+
+[sub_resource type="CylinderShape3D" id="6"]
+radius = 0.14
+height = 0.30
+
+[sub_resource type="StandardMaterial3D" id="7"]
+albedo_color = Color(0.72, 0.45, 0.2, 1)
+
+[sub_resource type="BoxShape3D" id="8"]
+size = Vector3(0.5, 0.5, 0.2)
+
+[sub_resource type="BoxShape3D" id="9"]
+size = Vector3(0.1, 0.3, 0.3)
+
+[sub_resource type="BoxShape3D" id="10"]
+size = Vector3(0.1, 0.3, 0.3)
+
+[sub_resource type="CylinderMesh" id="11"]
+top_radius = 0.06
+bottom_radius = 0.06
+height = 0.12
+radial_segments = 16
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="12"]
+albedo_color = Color(0.08, 0.12, 0.35, 1)
+
+[node name="LinearMotorSimulator" type="Node3D"]
+
+[node name="Bolt" type="RigidBody3D" parent="."]
+position = Vector3(1.05, 0.0, 0.0)
+gravity_scale = 0.0
+can_sleep = false
+axis_lock_linear_y = true
+axis_lock_linear_z = true
+axis_lock_angular_x = false
+axis_lock_angular_y = false
+axis_lock_angular_z = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Bolt"]
+rotation = Vector3(0, 0, -1.5708)
+shape = SubResource("1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Bolt"]
+rotation = Vector3(0, 0, -1.5708)
+mesh = SubResource("2")
+surface_material_override/0 = SubResource("3")
+
+[node name="Barrel" type="StaticBody3D" parent="."]
+position = Vector3(1.5, 0, 0)
+rotation = Vector3(0, 0, -1.5708)
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Barrel"]
+shape = SubResource("4")
+
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="Barrel"]
+use_collision = false
+
+[node name="Outer" type="CSGCylinder3D" parent="Barrel/CSGCombiner3D"]
+height = 0.45
+radius = 0.075
+sides = 32
+smooth_faces = true
+material = SubResource("5")
+
+[node name="Bore" type="CSGCylinder3D" parent="Barrel/CSGCombiner3D"]
+height = 0.50
+radius = 0.052
+sides = 32
+smooth_faces = true
+operation = 2
+
+[node name="Solenoid" type="StaticBody3D" parent="."]
+position = Vector3(1.5, 0, 0)
+rotation = Vector3(0, 0, -1.5708)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Solenoid"]
+shape = SubResource("6")
+
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="Solenoid"]
+use_collision = false
+
+[node name="Outer" type="CSGCylinder3D" parent="Solenoid/CSGCombiner3D"]
+height = 0.30
+radius = 0.14
+sides = 32
+smooth_faces = true
+material = SubResource("7")
+
+[node name="Bore" type="CSGCylinder3D" parent="Solenoid/CSGCombiner3D"]
+height = 0.35
+radius = 0.08
+sides = 32
+smooth_faces = true
+operation = 2
+
+[node name="Capacitor" type="Node3D" parent="."]
+position = Vector3(1.5, 0.45, 0.0)
+script = ExtResource("5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Capacitor"]
+mesh = SubResource("11")
+surface_material_override/0 = SubResource("12")
+
+[node name="Wire" type="MeshInstance3D" parent="."]
+script = ExtResource("6")
+from_path = NodePath("../Capacitor")
+to_path = NodePath("../Solenoid")
+
+[node name="MagnetHold" type="Area3D" parent="."]
+position = Vector3(1.5, 0, 0)
+script = ExtResource("4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MagnetHold"]
+shape = SubResource("8")
+
+[node name="Sensors" type="Node3D" parent="."]
+
+[node name="IRGateFront" type="Area3D" parent="Sensors"]
+position = Vector3(1.73, 0, 0)
+script = ExtResource("2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sensors/IRGateFront"]
+shape = SubResource("9")
+
+[node name="IRGateRear" type="Area3D" parent="Sensors"]
+position = Vector3(1.27, 0, 0)
+script = ExtResource("3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sensors/IRGateRear"]
+shape = SubResource("10")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(1.5, 0.7, 2.2)
+rotation = Vector3(-0.31, 0, 0)
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.7854, 0.7854, 0)
+
+[node name="SimulationController" type="Node" parent="."]
+script = ExtResource("1")
+
+[connection signal="beam_broken" from="Sensors/IRGateFront" to="SimulationController" method="_on_ir_gate_front_beam_broken"]
+[connection signal="beam_restored" from="Sensors/IRGateFront" to="SimulationController" method="_on_ir_gate_front_beam_restored"]
+[connection signal="beam_broken" from="Sensors/IRGateRear" to="SimulationController" method="_on_ir_gate_rear_beam_broken"]
+[connection signal="beam_restored" from="Sensors/IRGateRear" to="SimulationController" method="_on_ir_gate_rear_beam_restored"]
