@@ -1,12 +1,23 @@
+extends Control
+
+# Assuming this is the correct structure for the hud.gd file
+
+# Other code here...
+
+# Function that sets the state color
 func _state_colour(state):
     match state:
-        "idle":
-            return Color(1, 1, 1)
-        "running":
-            return Color(0, 1, 0)
-        "paused":
-            return Color(1, 1, 0)
-        "error":
-            return Color(1, 0, 0)
+        "armed":
+            # set color for armed state
+            pass
+        "disarmed":
+            # set color for disarmed state
+            pass
         _:
-            return Color(1, 1, 1)  # default color
+            # default color
+            pass
+
+# Other code here...
+
+# Update to correct line 233
+_btn_arm.disabled = false
