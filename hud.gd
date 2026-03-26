@@ -56,7 +56,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 func _make_shortcut(keycode: Key) -> Shortcut:
 	var ev := InputEventKey.new()
 	ev.keycode = keycode
-	ev.pressed = true
+	 ev.pressed = true
 	var sc := Shortcut.new()
 	sc.events = [ev]
 	return sc
@@ -207,13 +207,13 @@ func _refresh_battery_display() -> void:
 	_bat_lbl.text  = "%.1fV %d%%" % [v, int(soc * 100.0)]
 
 func _state_colour(state_name: String) -> Color:
-	match state_name:
-		"CHARGING": return COL_CHARGING
-		"ARMED":    return COL_ARMED
-		"FIRING":   return COL_FIRING
-		"DRAINING": return COL_DRAINING
-		"FAULT":    return COL_FAULT
-		_:          return COL_SAFE
+	switch state_name:
+		case "CHARGING": return COL_CHARGING
+		case "ARMED":    return COL_ARMED
+		case "FIRING":   return COL_FIRING
+		case "DRAINING": return COL_DRAINING
+		case "FAULT":    return COL_FAULT
+		_default:          return COL_SAFE
 
 ## ── Signal handlers ──────────────────────────────────────────────────────────
 
@@ -230,7 +230,7 @@ func _on_arm_pressed() -> void:
 		_mcu.arm_request()
 	else:
 		push_error("HUD: _mcu is null — check node path ../MCU")
-	_btn_arm.disabled  = true
+	_btn_arm.disabled  = false
 	_btn_fire.disabled = true
 
 func _on_fire_pressed() -> void:
