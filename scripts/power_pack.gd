@@ -67,13 +67,14 @@ extends Node3D
 @export var cooling_coeff_w_k:    float  = 0.8     ## natural convection + fins [W/K]
 @export var ambient_temp_c:       float  = 20.0
 
-var _voltage:        float = 0.0
-var _current:        float = 0.0
-var _avg_current_sq: float = 0.0
-var _fire_switch:    bool  = false
-var _drain_switch:   bool  = false
-var _charging:       bool  = false
-var _coil_temp_c:    float = 20.0
+var _voltage:           float = 0.0
+var _current:           float = 0.0
+var _avg_current_sq:    float = 0.0
+var _fire_switch:       bool  = false
+var _drain_switch:      bool  = false
+var _charging:          bool  = false
+var _coil_temp_c:       float = 20.0
+var _effective_charge_w: float = 30.0  ## per-frame power allocation from bus
 
 ## Back-EMF coupling — updated by SimCtrl every physics frame
 var _bolt_x:   float = 0.0   ## ferronock world position
@@ -81,6 +82,39 @@ var _bolt_vx:  float = 0.0
 var _solenoid: Node  = null
 
 signal charge_complete
+
+## Reference cap dimensions: 1.0mF/200V snap-in = ø30mm × 45mm.
+## Physical size scales with C^(1/3) (volume ∝ capacitance at same voltage rating).
+const _REF_CAP_F:       float = 0.001   ## 1.0 mF reference
+const _REF_CAP_DIA_M:   float = 0.030   ## 30 mm diameter
+const _REF_CAP_H_M:     float = 0.045   ## 45 mm height
+
+func _ready() -> void:
+	_rebuild_cap_visual()
+
+func _rebuild_cap_visual() -> void:
+	var scale_factor: float = pow(capacitance_f / _REF_CAP_F, 1.0 / 3.0)
+	var dia: float = _REF_CAP_DIA_M * scale_factor
+	var h:   float = _REF_CAP_H_M * scale_factor
+
+	var cap_mesh: MeshInstance3D = get_node_or_null("CapMesh")
+	if cap_mesh and cap_mesh.mesh is CylinderMesh:
+		cap_mesh.mesh.top_radius    = dia * 0.5
+		cap_mesh.mesh.bottom_radius = dia * 0.5
+		cap_mesh.mesh.height        = h
+		cap_mesh.position.y         = h * 0.5 + 0.002  ## sit on bracket
+
+	var cap_term: MeshInstance3D = get_node_or_null("CapTerminal")
+	if cap_term and cap_term.mesh is CylinderMesh:
+		cap_term.mesh.top_radius    = dia * 0.4
+		cap_term.mesh.bottom_radius = dia * 0.4
+		cap_term.position.y         = h + 0.003
+
+	var cap_stripe: MeshInstance3D = get_node_or_null("CapStripe")
+	if cap_stripe and cap_stripe.mesh is CylinderMesh:
+		cap_stripe.mesh.top_radius    = dia * 0.51
+		cap_stripe.mesh.bottom_radius = dia * 0.51
+		cap_stripe.position.y         = h * 0.85
 
 ## step() is now driven externally by SimCtrl (called after MCU fires stages and
 ## after set_bolt_state, so the correct bolt position and fire-switch state are
@@ -99,7 +133,16 @@ func begin_charge() -> void:
 	_charging     = true
 	_voltage      = 0.0
 	_current      = 0.0
-	_coil_temp_c  = ambient_temp_c
+	## NOTE: do NOT reset _coil_temp_c — thermal state persists between shots
+
+func begin_top_up() -> void:
+	## Like begin_charge but preserves current voltage (for pre-charge → top-up transition)
+	_fire_switch  = false
+	_drain_switch = false
+	_charging     = true
+
+func set_charge_power(watts: float) -> void:
+	_effective_charge_w = watts
 
 func arm() -> void:
 	_voltage      = initial_voltage_v
@@ -129,7 +172,7 @@ func safe() -> void:
 
 func step(delta: float) -> void:
 	if _charging:
-		var i_in: float = charge_power_w / maxf(_voltage, 1.0)
+		var i_in: float = _effective_charge_w / maxf(_voltage, 1.0)
 		_voltage       += i_in / capacitance_f * delta
 		_avg_current_sq = i_in * i_in
 		if _voltage >= target_voltage_v:
@@ -209,6 +252,11 @@ func is_charging()        -> bool:  return _charging
 func is_active()          -> bool:  return _fire_switch or _drain_switch or _charging
 func get_avg_current_sq() -> float: return _avg_current_sq
 func get_rms_current()    -> float: return sqrt(_avg_current_sq)
+
+func get_charge_power_draw() -> float:
+	## Current power draw from the bus during charging [W]
+	if not _charging: return 0.0
+	return _effective_charge_w
 
 func get_charge_fraction() -> float:
 	if target_voltage_v <= 0.0: return 0.0

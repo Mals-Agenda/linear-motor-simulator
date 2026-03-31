@@ -1,4 +1,4 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://byw7qdpsteg6s"]
 
 [ext_resource type="PackedScene" path="res://scenes/components/BreachDoor.tscn" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/components/Bolt.tscn" id="2"]
@@ -6,161 +6,164 @@
 [ext_resource type="PackedScene" path="res://scenes/components/Battery.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/ui/TelemetryGraph.tscn" id="6"]
-[ext_resource type="Script" path="res://scripts/mcu.gd" id="7"]
-[ext_resource type="Script" path="res://scripts/sim_ctrl.gd" id="8"]
-[ext_resource type="Script" path="res://scripts/shot_recorder.gd" id="9"]
+[ext_resource type="Script" uid="uid://dwap88gm1158a" path="res://scripts/mcu.gd" id="7"]
+[ext_resource type="Script" uid="uid://c6btv5hhd5w6q" path="res://scripts/sim_ctrl.gd" id="8"]
+[ext_resource type="Script" uid="uid://cj42p0tsvffo6" path="res://scripts/shot_recorder.gd" id="9"]
 [ext_resource type="PackedScene" path="res://scenes/components/IRGateSegment.tscn" id="10"]
 [ext_resource type="PackedScene" path="res://scenes/components/MCUBoard.tscn" id="11"]
+[ext_resource type="Script" uid="uid://g464bsg2hpto" path="res://scripts/safety_brain.gd" id="12"]
 
-[node name="Coilgun20" type="Node3D"]
+[node name="Coilgun20" type="Node3D" unique_id=1972854797]
 
-[node name="BreachDoor" parent="." instance=ExtResource("1")]
-position = Vector3(-0.10, 0.0, 0.0)
+[node name="BreachDoor" parent="." unique_id=2055905852 instance=ExtResource("1")]
+transform = Transform3D(-3.6199901e-06, 1, 0, -1, -3.6199901e-06, 0, 0, 0, 1, -0.1, 0, 0)
 
-[node name="Bolt" parent="." instance=ExtResource("2")]
-position = Vector3(0.72, 0.0, 0.0)
+[node name="Bolt" parent="." unique_id=1289899704 instance=ExtResource("2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.72, 0, 0)
 
-[node name="Segment0" parent="." instance=ExtResource("3")]
-position = Vector3(0.50, 0.0, 0.0)
+[node name="Segment0" parent="." unique_id=2127027726 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
 
-[node name="IRGateSegment0" parent="." instance=ExtResource("10")]
-position = Vector3(0.70, 0.0, 0.0)
+[node name="IRGateSegment0" parent="." unique_id=3461705 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0, 0)
 
-[node name="Segment1" parent="." instance=ExtResource("3")]
-position = Vector3(0.90, 0.0, 0.0)
+[node name="Segment1" parent="." unique_id=675268591 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0, 0)
 
-[node name="IRGateSegment1" parent="." instance=ExtResource("10")]
-position = Vector3(1.10, 0.0, 0.0)
+[node name="IRGateSegment1" parent="." unique_id=948867335 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 0, 0)
 
-[node name="Segment2" parent="." instance=ExtResource("3")]
-position = Vector3(1.30, 0.0, 0.0)
+[node name="Segment2" parent="." unique_id=499990097 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 0, 0)
 
-[node name="IRGateSegment2" parent="." instance=ExtResource("10")]
-position = Vector3(1.50, 0.0, 0.0)
+[node name="IRGateSegment2" parent="." unique_id=1503217699 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
 
-[node name="Segment3" parent="." instance=ExtResource("3")]
-position = Vector3(1.70, 0.0, 0.0)
+[node name="Segment3" parent="." unique_id=1098577339 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0, 0)
 
-[node name="IRGateSegment3" parent="." instance=ExtResource("10")]
-position = Vector3(1.90, 0.0, 0.0)
+[node name="IRGateSegment3" parent="." unique_id=1844356577 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 0, 0)
 
-[node name="Segment4" parent="." instance=ExtResource("3")]
-position = Vector3(2.10, 0.0, 0.0)
+[node name="Segment4" parent="." unique_id=18760585 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 0, 0)
 
-[node name="IRGateSegment4" parent="." instance=ExtResource("10")]
-position = Vector3(2.30, 0.0, 0.0)
+[node name="IRGateSegment4" parent="." unique_id=1445989499 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 0, 0)
 
-[node name="Segment5" parent="." instance=ExtResource("3")]
-position = Vector3(2.50, 0.0, 0.0)
+[node name="Segment5" parent="." unique_id=1923396088 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
 
-[node name="IRGateSegment5" parent="." instance=ExtResource("10")]
-position = Vector3(2.70, 0.0, 0.0)
+[node name="IRGateSegment5" parent="." unique_id=569802533 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7, 0, 0)
 
-[node name="Segment6" parent="." instance=ExtResource("3")]
-position = Vector3(2.90, 0.0, 0.0)
+[node name="Segment6" parent="." unique_id=446525220 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9, 0, 0)
 
-[node name="IRGateSegment6" parent="." instance=ExtResource("10")]
-position = Vector3(3.10, 0.0, 0.0)
+[node name="IRGateSegment6" parent="." unique_id=546449005 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1, 0, 0)
 
-[node name="Segment7" parent="." instance=ExtResource("3")]
-position = Vector3(3.30, 0.0, 0.0)
+[node name="Segment7" parent="." unique_id=912837634 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3, 0, 0)
 
-[node name="IRGateSegment7" parent="." instance=ExtResource("10")]
-position = Vector3(3.50, 0.0, 0.0)
+[node name="IRGateSegment7" parent="." unique_id=799491562 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, 0)
 
-[node name="Segment8" parent="." instance=ExtResource("3")]
-position = Vector3(3.70, 0.0, 0.0)
+[node name="Segment8" parent="." unique_id=974327470 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7, 0, 0)
 
-[node name="IRGateSegment8" parent="." instance=ExtResource("10")]
-position = Vector3(3.90, 0.0, 0.0)
+[node name="IRGateSegment8" parent="." unique_id=1606061159 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9, 0, 0)
 
-[node name="Segment9" parent="." instance=ExtResource("3")]
-position = Vector3(4.10, 0.0, 0.0)
+[node name="Segment9" parent="." unique_id=411124732 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.1, 0, 0)
 
-[node name="IRGateSegment9" parent="." instance=ExtResource("10")]
-position = Vector3(4.30, 0.0, 0.0)
+[node name="IRGateSegment9" parent="." unique_id=731406021 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3, 0, 0)
 
-[node name="Segment10" parent="." instance=ExtResource("3")]
-position = Vector3(4.50, 0.0, 0.0)
+[node name="Segment10" parent="." unique_id=572917200 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 0)
 
-[node name="IRGateSegment10" parent="." instance=ExtResource("10")]
-position = Vector3(4.70, 0.0, 0.0)
+[node name="IRGateSegment10" parent="." unique_id=395223975 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7, 0, 0)
 
-[node name="Segment11" parent="." instance=ExtResource("3")]
-position = Vector3(4.90, 0.0, 0.0)
+[node name="Segment11" parent="." unique_id=106941008 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9, 0, 0)
 
-[node name="IRGateSegment11" parent="." instance=ExtResource("10")]
-position = Vector3(5.10, 0.0, 0.0)
+[node name="IRGateSegment11" parent="." unique_id=2003536120 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1, 0, 0)
 
-[node name="Segment12" parent="." instance=ExtResource("3")]
-position = Vector3(5.30, 0.0, 0.0)
+[node name="Segment12" parent="." unique_id=559854001 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3, 0, 0)
 
-[node name="IRGateSegment12" parent="." instance=ExtResource("10")]
-position = Vector3(5.50, 0.0, 0.0)
+[node name="IRGateSegment12" parent="." unique_id=1056914035 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 0)
 
-[node name="Segment13" parent="." instance=ExtResource("3")]
-position = Vector3(5.70, 0.0, 0.0)
+[node name="Segment13" parent="." unique_id=2109090371 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.7, 0, 0)
 
-[node name="IRGateSegment13" parent="." instance=ExtResource("10")]
-position = Vector3(5.90, 0.0, 0.0)
+[node name="IRGateSegment13" parent="." unique_id=2029469775 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9, 0, 0)
 
-[node name="Segment14" parent="." instance=ExtResource("3")]
-position = Vector3(6.10, 0.0, 0.0)
+[node name="Segment14" parent="." unique_id=1230301200 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.1, 0, 0)
 
-[node name="IRGateSegment14" parent="." instance=ExtResource("10")]
-position = Vector3(6.30, 0.0, 0.0)
+[node name="IRGateSegment14" parent="." unique_id=1364409452 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.3, 0, 0)
 
-[node name="Segment15" parent="." instance=ExtResource("3")]
-position = Vector3(6.50, 0.0, 0.0)
+[node name="Segment15" parent="." unique_id=604409337 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, 0)
 
-[node name="IRGateSegment15" parent="." instance=ExtResource("10")]
-position = Vector3(6.70, 0.0, 0.0)
+[node name="IRGateSegment15" parent="." unique_id=685461261 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.7, 0, 0)
 
-[node name="Segment16" parent="." instance=ExtResource("3")]
-position = Vector3(6.90, 0.0, 0.0)
+[node name="Segment16" parent="." unique_id=1826073821 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9, 0, 0)
 
-[node name="IRGateSegment16" parent="." instance=ExtResource("10")]
-position = Vector3(7.10, 0.0, 0.0)
+[node name="IRGateSegment16" parent="." unique_id=596806056 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.1, 0, 0)
 
-[node name="Segment17" parent="." instance=ExtResource("3")]
-position = Vector3(7.30, 0.0, 0.0)
+[node name="Segment17" parent="." unique_id=1101513065 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.3, 0, 0)
 
-[node name="IRGateSegment17" parent="." instance=ExtResource("10")]
-position = Vector3(7.50, 0.0, 0.0)
+[node name="IRGateSegment17" parent="." unique_id=533849899 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 0)
 
-[node name="Segment18" parent="." instance=ExtResource("3")]
-position = Vector3(7.70, 0.0, 0.0)
+[node name="Segment18" parent="." unique_id=49064636 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.7, 0, 0)
 
-[node name="IRGateSegment18" parent="." instance=ExtResource("10")]
-position = Vector3(7.90, 0.0, 0.0)
+[node name="IRGateSegment18" parent="." unique_id=1880171258 instance=ExtResource("10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.9, 0, 0)
 
-[node name="Segment19" parent="." instance=ExtResource("3")]
-position = Vector3(8.10, 0.0, 0.0)
+[node name="Segment19" parent="." unique_id=1573892750 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.1, 0, 0)
 
-[node name="Battery" parent="." instance=ExtResource("4")]
-position = Vector3(4.30, -0.28, 0.0)
+[node name="Battery" parent="." unique_id=1295340761 instance=ExtResource("4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3, -0.28, 0)
 
-[node name="MCUBoard" parent="." instance=ExtResource("11")]
-position = Vector3(4.30, -0.20, 0.15)
+[node name="MCUBoard" parent="." unique_id=1998808480 instance=ExtResource("11")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3, -0.2, 0.15)
 
-[node name="MCU" type="Node" parent="."]
+[node name="SafetyBrain" type="Node" parent="." unique_id=27272716]
+script = ExtResource("12")
+
+[node name="MCU" type="Node" parent="." unique_id=1438757433]
 script = ExtResource("7")
 stage_count = 20
 
-[node name="SimCtrl" type="Node" parent="."]
+[node name="SimCtrl" type="Node" parent="." unique_id=496081273]
 script = ExtResource("8")
 
-[node name="ShotRecorder" type="Node" parent="."]
+[node name="ShotRecorder" type="Node" parent="." unique_id=741406479]
 script = ExtResource("9")
 
-[node name="HUD" parent="." instance=ExtResource("5")]
+[node name="HUD" parent="." unique_id=409426962 instance=ExtResource("5")]
 
-[node name="TelemetryGraph" parent="." instance=ExtResource("6")]
+[node name="TelemetryGraph" parent="." unique_id=476926205 instance=ExtResource("6")]
 
-[node name="Camera3D" type="Camera3D" parent="."]
-position = Vector3(4.30, 0.50, 1.50)
-rotation = Vector3(-0.30, 0.0, 0.0)
+[node name="Camera3D" type="Camera3D" parent="." unique_id=433067060]
+transform = Transform3D(1, 0, 0, 0, 0.9553365, 0.29552022, 0, -0.29552022, 0.9553365, 4.3, 0.5, 1.5)
 current = true
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-rotation = Vector3(-0.7854, 0.7854, 0.0)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1934740640]
+transform = Transform3D(0.7071055, -0.50000185, 0.5, 0, 0.7071055, 0.7071081, -0.7071081, -0.5, 0.4999982, 0, 0, 0)

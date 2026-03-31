@@ -16,11 +16,12 @@ extends Node
 ##   5. Sums solenoid forces (evaluated at ferronock_x) + friction + drag + magnet.
 ##   6. Applies total force to bolt.constant_force.
 
-@onready var bolt:         RigidBody3D = $"../Bolt"
-@onready var breach_door               = $"../BreachDoor"
-@onready var mcu:          Node        = $"../MCU"
-@onready var _telem_graph: Node        = $"../TelemetryGraph"
-@onready var _recorder:    Node        = $"../ShotRecorder"
+@onready var bolt:          RigidBody3D = $"../Bolt"
+@onready var breach_door                = $"../BreachDoor"
+@onready var mcu:           Node        = $"../MCU"
+@onready var safety_brain:  Node        = $"../SafetyBrain"
+@onready var _telem_graph:  Node        = $"../TelemetryGraph"
+@onready var _recorder:     Node        = $"../ShotRecorder"
 
 @export var friction_coeff:      float = 0.05   ## viscous barrel friction [N·s/m]
 @export var drag_coeff:          float = 0.001  ## quadratic aero drag [N·s²/m²]
@@ -85,12 +86,14 @@ func _physics_process(delta: float) -> void:
 		if pp:
 			pp.set_bolt_state(fx, vx, sol)
 
-	## ── 2. Position-cascade: MCU fires next stage when ferronock arrives ────────
-	if _mcu_ok:
+	## ── 2. Bolt state → SafetyBrain → FiringBrain cascade ───────────────────
+	## Safety brain processes sensors/faults, then forwards to firing brain.
+	if safety_brain and safety_brain.has_method("update_bolt_state"):
+		safety_brain.update_bolt_state(fx, vx)
+	elif _mcu_ok:
+		## Fallback: direct to firing brain if no safety brain
 		if mcu.has_method("update_bolt_state"):
 			mcu.update_bolt_state(fx, vx)
-		else:
-			mcu.update_ferronock_pos(fx)
 
 	## ── 3. Physics step every PowerPack (after MCU may have set fire switches) ──
 	## Driving step() here (instead of PowerPack._physics_process) ensures that
@@ -129,6 +132,9 @@ func _physics_process(delta: float) -> void:
 			var ev: String = "S%d_deenergised" % i
 			print("EVENT: S%d de-energised  t=%.4f  fx=%.3f  v=%.3f" % [i, _sim_time, fx, vx])
 			_write_csv_row(bolt.global_position.x, vx, fx, 0.0, 0.0, 0.0, ev)
+			## Notify firing brain for calibration
+			if _mcu_ok and mcu.has_method("notify_stage_deenergised"):
+				mcu.notify_stage_deenergised(i, vx)
 
 	var in_barrel:  bool  = x > barrel_start_x and x < barrel_end_x
 	var f_friction: float = -friction_coeff * vx if in_barrel else 0.0
@@ -143,6 +149,11 @@ func _physics_process(delta: float) -> void:
 	_feed_instruments(x, vx, f_friction, f_drag, f_magnet)
 
 ## ── Public interface ──────────────────────────────────────────────────────────
+
+func is_bolt_loaded() -> bool:
+	## Bolt is "loaded" if it's near the breach (within 1m of barrel start)
+	if not bolt: return false
+	return bolt.global_position.x < barrel_start_x + 1.0
 
 func reset_bolt() -> void:
 	if not bolt: return
@@ -224,7 +235,7 @@ func _log_charge_status() -> void:
 		## within the same physics frame if PowerPack processes before SimCtrl.
 		var is_chg: bool
 		if _mcu_ok and mcu.has_method("get_stage_state_name"):
-			is_chg = (mcu.get_stage_state_name(i) == "CHARGING")
+			is_chg = mcu.get_stage_state_name(i) in ["PRE_CHARGING", "TOPPING_UP"]
 		else:
 			is_chg = pp.is_charging()
 		if not is_chg: continue
