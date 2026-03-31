@@ -5,7 +5,15 @@
       "Read(//data/data/**)",
       "Bash(pm list:*)",
       "Bash(echo $TMPDIR)",
-      "Bash(echo $HOME)"
+      "Bash(echo $HOME)",
+      "Bash(find /storage/emulated/0/Documents/linear-motor-simulator -type f -exec ls -lh {})",
+      "Bash(g++ -std=c++17 -I.. stub_test.cpp mcu_fw.cpp -o stub_test)",
+      "Bash(./stub_test)",
+      "Bash(export TMPDIR=/data/data/com.termux/files/usr/tmp)",
+      "Bash(g++ -std=c++17 -I.. stub_test.cpp mcu_fw.cpp -o /data/data/com.termux/files/usr/tmp/stub_test)",
+      "Bash(/data/data/com.termux/files/usr/tmp/stub_test)",
+      "Bash(cat /storage/emulated/0/Documents/linear-motor-simulator/scripts/*)",
+      "Bash(TMPDIR=/data/data/com.termux/files/usr/tmp ls /storage/emulated/0/Documents/linear-motor-simulator/)"
     ]
   }
 }

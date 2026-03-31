@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+"""
+SConstruct — build the mcu GDExtension.
+
+Prerequisites:
+  1. Clone godot-cpp alongside this project, or set GODOT_CPP_PATH:
+       git clone https://github.com/godotengine/godot-cpp.git
+     Branch: 4.x (must match your Godot editor version)
+
+  2. Build godot-cpp first:
+       cd godot-cpp && scons platform=<your_platform>
+
+  3. Build this extension:
+       scons platform=linux   # or windows / macos / android
+       scons platform=android arch=arm64   # for Android export
+
+Output: bin/libmcu.<platform>.<arch>.so (or .dll / .dylib)
+
+The .gdextension file (mcu.gdextension) tells Godot where to find the binary.
+"""
+
+import os, sys
+
+# ── godot-cpp location ────────────────────────────────────────────────────────
+godot_cpp_path = ARGUMENTS.get("godot_cpp", "../godot-cpp")
+if not os.path.isdir(godot_cpp_path):
+    print("ERROR: godot-cpp not found at '%s'" % godot_cpp_path)
+    print("  Set godot_cpp=<path> or clone godot-cpp next to this directory.")
+    sys.exit(1)
+
+env = SConscript(godot_cpp_path + "/SConstruct")
+
+# ── Sources ───────────────────────────────────────────────────────────────────
+env.Append(CPPPATH=[".", ".."])
+
+sources = [
+    "register_types.cpp",
+    "mcu_node.cpp",
+    "../firmware/mcu_fw.cpp",
+]
+
+# ── Output ────────────────────────────────────────────────────────────────────
+lib = env.SharedLibrary(
+    target = "bin/libmcu",
+    source = sources,
+)
+Default(lib)

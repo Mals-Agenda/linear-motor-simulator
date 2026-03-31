@@ -11,9 +11,15 @@ config_version=5
 [application]
 
 config/name="Linear Motor Simulator"
-run/main_scene="uid://vruwgf1holk7"
+run/main_scene="res://scenes/Coilgun20.tscn"
 config/features=PackedStringArray("4.6", "Mobile")
 config/icon="res://icon.svg"
+
+[autoload]
+
+MCPScreenshot="*res://addons/godot_mcp/mcp_screenshot_service.gd"
+MCPInputService="*res://addons/godot_mcp/mcp_input_service.gd"
+MCPGameInspector="*res://addons/godot_mcp/mcp_game_inspector_service.gd"
 
 [editor_plugins]
 

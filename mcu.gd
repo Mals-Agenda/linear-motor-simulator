@@ -3,33 +3,39 @@ class_name MCU
 
 ## Multi-stage fire sequencer, sensor watchdog, and fault manager.
 ##
+## Scales automatically to any number of stages.
+## Name convention in the parent scene:
+##   PowerPack0 … PowerPackN-1
+##   Solenoid0  … SolenoidN-1   (optional — used by SimCtrl)
+##   IRGate<i>Trigger            (optional — fires stage i when beam breaks)
+##   IRGate<i>Front              (optional — muzzle-velocity gate on last stage)
+##
 ## User flow:
 ##   arm_request()  → charges all caps (SAFE → CHARGING → ARMED)
 ##   fire_request() → resets bolt, fires stage 0 (ARMED → FIRING)
-##   Stage 1 fires automatically via IR gate cascade.
+##   Subsequent stages fire automatically via IR gate cascade.
 ##
-## ── Adding stage N ────────────────────────────────────────────────────────────
-## 1. Add @onready var ppN = $"../PowerPackN"
-## 2. Append ppN to _pp in _ready()
-## 3. Add on_ir_gateN_* callbacks wired from CrossbowRig.tscn
+## ── Adding stages ─────────────────────────────────────────────────────────────
+## 1. Add PowerPackN to the parent scene.
+## 2. Increment stage_count export.
+## 3. Add IRGate<N>Trigger (optional — for auto-cascade).
+## All signal names, StageState values, and method signatures are stable.
 ##
 ## ── Swapping for a real MCU (UART/USB bridge) ─────────────────────────────────
 ## • arm_request / fire_request → TX serial command packets
-## • on_ir_gate_* callbacks     → RX serial interrupt handlers
+## • on_ir_gateN_*  callbacks   → RX serial interrupt handlers
 ## • _physics_process polling   → RX ADC telemetry stream
 ## • Signal names, StageState enum, method signatures stay IDENTICAL
 
-@onready var pp0       = $"../PowerPack0"
-@onready var pp1       = $"../PowerPack1"
-@onready var _sim_ctrl = $"../SimCtrl"
-
-@export var firing_timeout_s: float = 2.0
+@export var stage_count:       int   = 2
+@export var firing_timeout_s:  float = 2.0
 
 ## Outbound signals — keep names identical in any real MCU bridge
 signal mcu_stage_charging(stage: int)
 signal mcu_stage_armed(stage: int)
 signal mcu_stage_fired(stage: int)
 signal mcu_stage_drained(stage: int)
+signal mcu_stage_safe(stage: int)
 signal mcu_fault(stage: int, reason: String)
 signal mcu_ready   ## all stages ARMED, fire_request() may be called
 
@@ -41,25 +47,46 @@ var _ts:    Array = []
 var _state: Array = []
 var _timer: Array = []
 
-var _t_ir1_trigger: float = 0.0
-var _t_ir1_front:   float = 0.0
-var _sim_time:      float = 0.0
+var _t_trig:    Array = []   ## IR trigger timestamps per stage
+var _sim_ctrl:  Node  = null
+var _sim_time:  float = 0.0
 
 func _ready() -> void:
-	_pp    = [pp0, pp1]
-	_state = [StageState.SAFE, StageState.SAFE]
-	_timer = [0.0, 0.0]
+	_sim_ctrl = get_node_or_null("../SimCtrl")
 
-	## Connect charge_complete signals once
-	for i in range(_pp.size()):
-		if _pp[i] and _pp[i].has_signal("charge_complete"):
-			_pp[i].charge_complete.connect(_on_stage_charged.bind(i))
+	## Dynamically discover PowerPack nodes
+	for i in range(stage_count):
+		var pp: Node = get_node_or_null("../PowerPack%d" % i)
+		_pp.append(pp)
+		_state.append(StageState.SAFE)
+		_timer.append(0.0)
+		_t_trig.append(0.0)
 
-	_setup_stage_sensors(0)
-	_setup_stage_sensors(1)
+		if pp and pp.has_signal("charge_complete"):
+			pp.charge_complete.connect(_on_stage_charged.bind(i))
+
+		_setup_stage_sensors(i)
+
+	## Wire IR gates dynamically
+	for i in range(stage_count):
+		_connect_ir_gate("../IRGate%dTrigger" % i,
+			func(): _on_ir_trigger(i),
+			func(): print("MCU: IRGate%dTrigger restored" % i))
+		_connect_ir_gate("../IRGate%dFront" % i,
+			func(): _on_ir_front(i),
+			func(): print("MCU: IRGate%dFront restored" % i))
+		_connect_ir_gate("../IRGate%dRear" % i,
+			func(): print("MCU: IRGate%dRear BROKEN" % i),
+			func(): print("MCU: IRGate%dRear restored" % i))
+
+func _connect_ir_gate(path: String, broken_cb: Callable, restored_cb: Callable) -> void:
+	var gate: Node = get_node_or_null(path)
+	if not gate: return
+	if gate.has_signal("beam_broken"):   gate.beam_broken.connect(broken_cb)
+	if gate.has_signal("beam_restored"): gate.beam_restored.connect(restored_cb)
 
 func _setup_stage_sensors(i: int) -> void:
-	var pp = _pp[i] if i < _pp.size() else null
+	var pp: Node = _pp[i] if i < _pp.size() else null
 	if not pp:
 		_vs.append(null); _ts.append(null); return
 	var vs: VoltageSensor = pp.get_node_or_null("VoltageSensor") as VoltageSensor
@@ -77,14 +104,14 @@ func _physics_process(delta: float) -> void:
 
 	## Poll sensors
 	for i in range(_pp.size()):
-		var pp = _pp[i]
+		var pp: Node = _pp[i]
 		if not pp: continue
 		if i < _vs.size() and _vs[i]: _vs[i].sample(pp.get_voltage())
 		if i < _ts.size() and _ts[i]: _ts[i].sample(pp.get_coil_temp_c())
 
 	## Watchdogs
 	for i in range(_pp.size()):
-		var pp = _pp[i]
+		var pp: Node = _pp[i]
 		match _state[i]:
 			StageState.FIRING:
 				_timer[i] += delta
@@ -99,12 +126,10 @@ func _physics_process(delta: float) -> void:
 ## ── User-facing interface ─────────────────────────────────────────────────────
 
 func arm_request() -> void:
-	## Charge all stages simultaneously from 0V
 	for i in range(_pp.size()):
 		_charge_stage(i)
 
 func fire_request() -> void:
-	## Fire stage 0 only if armed; reset bolt first
 	if _state[0] != StageState.ARMED: return
 	if _sim_ctrl and _sim_ctrl.has_method("reset_bolt"):
 		_sim_ctrl.reset_bolt()
@@ -114,7 +139,6 @@ func fire_request() -> void:
 ## ── Stage command interface ───────────────────────────────────────────────────
 
 func arm_stage(i: int) -> void:
-	## Instant-arm (sets voltage directly) — used as fallback if no charger
 	if i >= _pp.size() or not _pp[i]: return
 	if _state[i] == StageState.SAFE:
 		_pp[i].arm()
@@ -150,48 +174,36 @@ func get_sensor_reading(stage: int, which: String) -> float:
 		"temp":    return _ts[stage].get_reading()  if (stage < _ts.size() and _ts[stage]) else 0.0
 	return 0.0
 
-## ── IR gate callbacks (wired from CrossbowRig.tscn) ──────────────────────────
+## ── IR gate callbacks ─────────────────────────────────────────────────────────
 
-func on_ir_gate0_rear_broken()    -> void: print("MCU: IRGate0Rear  BROKEN")
-func on_ir_gate0_rear_restored()  -> void: print("MCU: IRGate0Rear  restored")
+func _on_ir_trigger(i: int) -> void:
+	_t_trig[i] = _sim_time
+	print("MCU: IRGate%dTrigger BROKEN — firing stage %d  (S%d: %s)" \
+		% [i, i, i, get_stage_state_name(i)])
+	fire_stage(i)
 
-func on_ir_gate0_front_broken() -> void:
-	## Bolt cleared stage 0 — stage 1 should already be ARMED from arm_request
-	print("MCU: IRGate0Front BROKEN — S1: %s" % get_stage_state_name(1))
-
-func on_ir_gate0_front_restored() -> void: print("MCU: IRGate0Front restored")
-
-func on_ir_gate1_trigger_broken() -> void:
-	_t_ir1_trigger = _sim_time
-	print("MCU: IRGate1Trigger BROKEN — firing stage 1")
-	fire_stage(1)
-
-func on_ir_gate1_trigger_restored() -> void: print("MCU: IRGate1Trigger restored")
-
-func on_ir_gate1_front_broken() -> void:
-	_t_ir1_front = _sim_time
-	var dt: float = _t_ir1_front - _t_ir1_trigger
-	var v_muzzle: float = 0.43 / dt if dt > 0.0001 else 0.0
-	print("MCU: IRGate1Front BROKEN — muzzle v≈%.1f m/s  (Δt=%.5fs)" % [v_muzzle, dt])
-	## Push to HUD if available
-	var hud = get_node_or_null("../HUD")
-	if hud and hud.has_method("show_muzzle_velocity"):
-		hud.show_muzzle_velocity(v_muzzle)
-
-func on_ir_gate1_front_restored() -> void: print("MCU: IRGate1Front restored")
+func _on_ir_front(i: int) -> void:
+	var dt: float = _sim_time - _t_trig[i]
+	## 0.25 m is the IR gate spacing (IRGate1Trigger x=1.05 → IRGate1Front x=1.30)
+	var gate_spacing: float = 0.25
+	var v_ms: float = gate_spacing / dt if dt > 0.0001 else 0.0
+	print("MCU: IRGate%dFront BROKEN — v≈%.1f m/s  (Δt=%.5fs)" % [i, v_ms, dt])
+	## Push to HUD if it's the last gate
+	if i == stage_count - 1:
+		var hud: Node = get_node_or_null("../HUD")
+		if hud and hud.has_method("show_muzzle_velocity"):
+			hud.show_muzzle_velocity(v_ms)
 
 ## ── Internal helpers ─────────────────────────────────────────────────────────
 
 func _charge_stage(i: int) -> void:
 	if i >= _pp.size() or not _pp[i]: return
-	## Skip if already in progress
 	if _state[i] in [StageState.CHARGING, StageState.ARMED, StageState.FIRING]: return
 	_pp[i].begin_charge()
 	_set_state(i, StageState.CHARGING)
 
 func _on_stage_charged(i: int) -> void:
 	_set_state(i, StageState.ARMED)
-	## Emit mcu_ready when all stages are ARMED
 	for s in _state:
 		if s != StageState.ARMED: return
 	print("MCU: ALL STAGES ARMED — ready to fire")
@@ -199,7 +211,7 @@ func _on_stage_charged(i: int) -> void:
 
 func _set_state(i: int, s: StageState) -> void:
 	_state[i] = s
-	var pp = _pp[i] if i < _pp.size() else null
+	var pp: Node = _pp[i] if i < _pp.size() else null
 	match s:
 		StageState.CHARGING:
 			print("MCU: S%d CHARGING" % i)
@@ -215,6 +227,7 @@ func _set_state(i: int, s: StageState) -> void:
 			mcu_stage_drained.emit(i)
 		StageState.SAFE:
 			print("MCU: S%d SAFE" % i)
+			mcu_stage_safe.emit(i)
 		StageState.FAULT:
 			pass  ## logged by _trigger_fault
 

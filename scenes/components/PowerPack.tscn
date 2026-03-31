@@ -1,0 +1,220 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/power_pack.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/VoltageSensor.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/TempSensor.gd" id="3"]
+
+; ── Capacitor: Nichicon UBY2D102MHD — ø30mm × 45mm snap-in electrolytic ──────
+[sub_resource type="CylinderMesh" id="cap_mesh"]
+top_radius = 0.015
+bottom_radius = 0.015
+height = 0.045
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="cap_mat"]
+albedo_color = Color(0.05, 0.05, 0.08, 1)
+
+; Cap top terminal ring
+[sub_resource type="CylinderMesh" id="cap_terminal"]
+top_radius = 0.012
+bottom_radius = 0.012
+height = 0.002
+radial_segments = 16
+
+[sub_resource type="StandardMaterial3D" id="cap_terminal_mat"]
+albedo_color = Color(0.75, 0.75, 0.78, 1)
+metallic = 0.8
+
+; Cap sleeve stripe (voltage marking)
+[sub_resource type="CylinderMesh" id="cap_stripe"]
+top_radius = 0.0152
+bottom_radius = 0.0152
+height = 0.005
+radial_segments = 24
+
+[sub_resource type="StandardMaterial3D" id="cap_stripe_mat"]
+albedo_color = Color(0.15, 0.35, 0.65, 1)
+
+; ── MOSFET: IRFP4668PBF — TO-247AC 15.75×20.80×5.31mm ───────────────────────
+[sub_resource type="BoxMesh" id="mosfet_body"]
+size = Vector3(0.01575, 0.02080, 0.00531)
+
+[sub_resource type="StandardMaterial3D" id="mosfet_mat"]
+albedo_color = Color(0.08, 0.08, 0.10, 1)
+
+; MOSFET heatsink tab
+[sub_resource type="BoxMesh" id="mosfet_tab"]
+size = Vector3(0.01575, 0.008, 0.001)
+
+[sub_resource type="StandardMaterial3D" id="mosfet_tab_mat"]
+albedo_color = Color(0.70, 0.70, 0.72, 1)
+metallic = 0.9
+
+; MOSFET leads (3 pins)
+[sub_resource type="BoxMesh" id="mosfet_lead"]
+size = Vector3(0.001, 0.012, 0.0006)
+
+[sub_resource type="StandardMaterial3D" id="lead_mat"]
+albedo_color = Color(0.70, 0.70, 0.72, 1)
+metallic = 0.8
+
+; ── Bleed Resistor: Ohmite 825F10R0 — ø12.7×50.8mm wirewound ────────────────
+[sub_resource type="CylinderMesh" id="bleed_mesh"]
+top_radius = 0.00635
+bottom_radius = 0.00635
+height = 0.0508
+radial_segments = 16
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="bleed_mat"]
+albedo_color = Color(0.82, 0.78, 0.72, 1)
+
+; Bleed resistor leads
+[sub_resource type="CylinderMesh" id="bleed_lead"]
+top_radius = 0.0005
+bottom_radius = 0.0005
+height = 0.012
+radial_segments = 6
+
+; ── Boost Converter PCB: LT3757 based — 40×25×15mm module ────────────────────
+[sub_resource type="BoxMesh" id="boost_pcb"]
+size = Vector3(0.040, 0.002, 0.025)
+
+[sub_resource type="StandardMaterial3D" id="pcb_mat"]
+albedo_color = Color(0.02, 0.30, 0.08, 1)
+
+; Boost inductor (toroid on PCB)
+[sub_resource type="CylinderMesh" id="boost_inductor"]
+top_radius = 0.006
+bottom_radius = 0.006
+height = 0.012
+radial_segments = 16
+
+[sub_resource type="StandardMaterial3D" id="inductor_mat"]
+albedo_color = Color(0.15, 0.15, 0.18, 1)
+
+; Boost IC (MSOP-10 package)
+[sub_resource type="BoxMesh" id="boost_ic"]
+size = Vector3(0.005, 0.001, 0.003)
+
+[sub_resource type="StandardMaterial3D" id="ic_mat"]
+albedo_color = Color(0.05, 0.05, 0.05, 1)
+
+; ── Gate Driver: IR2110 DIP-14 — 19.3×6.35×4.57mm ───────────────────────────
+[sub_resource type="BoxMesh" id="gdrv_mesh"]
+size = Vector3(0.0193, 0.00457, 0.00635)
+
+[sub_resource type="StandardMaterial3D" id="gdrv_mat"]
+albedo_color = Color(0.06, 0.06, 0.08, 1)
+
+; ── Mounting bracket / per-stage PCB — 80×60×2mm ─────────────────────────────
+[sub_resource type="BoxMesh" id="bracket_mesh"]
+size = Vector3(0.080, 0.002, 0.070)
+
+[sub_resource type="StandardMaterial3D" id="bracket_mat"]
+albedo_color = Color(0.02, 0.28, 0.06, 1)
+transparency = 1
+albedo_color = Color(0.02, 0.28, 0.06, 0.85)
+
+; ══════════════════════════════════════════════════════════════════════════════
+; Node tree
+; ══════════════════════════════════════════════════════════════════════════════
+
+[node name="PowerPack" type="Node3D"]
+script = ExtResource("1")
+
+; ── Mounting bracket (PCB) ────────────────────────────────────────────────────
+[node name="Bracket" type="MeshInstance3D" parent="."]
+mesh = SubResource("bracket_mesh")
+surface_material_override/0 = SubResource("bracket_mat")
+
+; ── Capacitor ─────────────────────────────────────────────────────────────────
+[node name="CapMesh" type="MeshInstance3D" parent="."]
+position = Vector3(-0.020, 0.024, 0.0)
+mesh = SubResource("cap_mesh")
+surface_material_override/0 = SubResource("cap_mat")
+
+[node name="CapTerminal" type="MeshInstance3D" parent="."]
+position = Vector3(-0.020, 0.047, 0.0)
+mesh = SubResource("cap_terminal")
+surface_material_override/0 = SubResource("cap_terminal_mat")
+
+[node name="CapStripe" type="MeshInstance3D" parent="."]
+position = Vector3(-0.020, 0.040, 0.0)
+mesh = SubResource("cap_stripe")
+surface_material_override/0 = SubResource("cap_stripe_mat")
+
+; ── MOSFET ────────────────────────────────────────────────────────────────────
+[node name="MosfetBody" type="MeshInstance3D" parent="."]
+position = Vector3(0.020, 0.012, 0.0)
+mesh = SubResource("mosfet_body")
+surface_material_override/0 = SubResource("mosfet_mat")
+
+[node name="MosfetTab" type="MeshInstance3D" parent="."]
+position = Vector3(0.020, 0.024, 0.0)
+mesh = SubResource("mosfet_tab")
+surface_material_override/0 = SubResource("mosfet_tab_mat")
+
+[node name="MosfetLead1" type="MeshInstance3D" parent="."]
+position = Vector3(0.017, -0.002, 0.0)
+mesh = SubResource("mosfet_lead")
+surface_material_override/0 = SubResource("lead_mat")
+
+[node name="MosfetLead2" type="MeshInstance3D" parent="."]
+position = Vector3(0.020, -0.002, 0.0)
+mesh = SubResource("mosfet_lead")
+surface_material_override/0 = SubResource("lead_mat")
+
+[node name="MosfetLead3" type="MeshInstance3D" parent="."]
+position = Vector3(0.023, -0.002, 0.0)
+mesh = SubResource("mosfet_lead")
+surface_material_override/0 = SubResource("lead_mat")
+
+; ── Bleed Resistor ────────────────────────────────────────────────────────────
+[node name="BleedResistor" type="MeshInstance3D" parent="."]
+position = Vector3(0.005, 0.008, 0.028)
+rotation = Vector3(0, 0, -1.5708)
+mesh = SubResource("bleed_mesh")
+surface_material_override/0 = SubResource("bleed_mat")
+
+[node name="BleedLead1" type="MeshInstance3D" parent="."]
+position = Vector3(-0.020, 0.008, 0.028)
+mesh = SubResource("bleed_lead")
+surface_material_override/0 = SubResource("lead_mat")
+
+[node name="BleedLead2" type="MeshInstance3D" parent="."]
+position = Vector3(0.030, 0.008, 0.028)
+mesh = SubResource("bleed_lead")
+surface_material_override/0 = SubResource("lead_mat")
+
+; ── Boost Converter Module ────────────────────────────────────────────────────
+[node name="BoostPCB" type="MeshInstance3D" parent="."]
+position = Vector3(0.0, 0.005, -0.025)
+mesh = SubResource("boost_pcb")
+surface_material_override/0 = SubResource("pcb_mat")
+
+[node name="BoostInductor" type="MeshInstance3D" parent="."]
+position = Vector3(-0.010, 0.012, -0.025)
+mesh = SubResource("boost_inductor")
+surface_material_override/0 = SubResource("inductor_mat")
+
+[node name="BoostIC" type="MeshInstance3D" parent="."]
+position = Vector3(0.008, 0.006, -0.025)
+mesh = SubResource("boost_ic")
+surface_material_override/0 = SubResource("ic_mat")
+
+; ── Gate Driver ───────────────────────────────────────────────────────────────
+[node name="GateDriver" type="MeshInstance3D" parent="."]
+position = Vector3(0.020, 0.005, -0.020)
+mesh = SubResource("gdrv_mesh")
+surface_material_override/0 = SubResource("gdrv_mat")
+
+; ── Sensors (logic-only, no visual) ──────────────────────────────────────────
+[node name="VoltageSensor" type="Node" parent="."]
+script = ExtResource("2")
+label = "VoltageSensor"
+
+[node name="TempSensor" type="Node" parent="."]
+script = ExtResource("3")
+label = "TempSensor"

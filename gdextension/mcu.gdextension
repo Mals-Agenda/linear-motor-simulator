@@ -1,0 +1,13 @@
+[configuration]
+entry_symbol = "mcu_library_init"
+compatibility_minimum = "4.1"
+
+[libraries]
+linux.debug.x86_64     = "res://gdextension/bin/libmcu.linux.template_debug.x86_64.so"
+linux.release.x86_64   = "res://gdextension/bin/libmcu.linux.template_release.x86_64.so"
+windows.debug.x86_64   = "res://gdextension/bin/libmcu.windows.template_debug.x86_64.dll"
+windows.release.x86_64 = "res://gdextension/bin/libmcu.windows.template_release.x86_64.dll"
+macos.debug             = "res://gdextension/bin/libmcu.macos.template_debug.framework"
+macos.release           = "res://gdextension/bin/libmcu.macos.template_release.framework"
+android.debug.arm64     = "res://gdextension/bin/libmcu.android.template_debug.arm64.so"
+android.release.arm64   = "res://gdextension/bin/libmcu.android.template_release.arm64.so"

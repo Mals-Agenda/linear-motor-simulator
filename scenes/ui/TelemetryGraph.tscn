@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/telemetry_graph.gd" id="1"]
+
+[node name="TelemetryGraph" type="CanvasLayer"]
+layer = 9
+script = ExtResource("1")

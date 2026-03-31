@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://buu5ee5fneust"
+
+[deps]
+
+files=["res://test_telemetry/run_2026-03-29T22-34-19.x.translation", "res://test_telemetry/run_2026-03-29T22-34-19.vx.translation", "res://test_telemetry/run_2026-03-29T22-34-19.stage.translation", "res://test_telemetry/run_2026-03-29T22-34-19.Vc.translation", "res://test_telemetry/run_2026-03-29T22-34-19.I.translation", "res://test_telemetry/run_2026-03-29T22-34-19.F.translation", "res://test_telemetry/run_2026-03-29T22-34-19.Ff.translation", "res://test_telemetry/run_2026-03-29T22-34-19.Fd.translation", "res://test_telemetry/run_2026-03-29T22-34-19.Fm.translation", "res://test_telemetry/run_2026-03-29T22-34-19.event.translation"]
+
+source_file="res://test_telemetry/run_2026-03-29T22-34-19.csv"
+dest_files=["res://test_telemetry/run_2026-03-29T22-34-19.x.translation", "res://test_telemetry/run_2026-03-29T22-34-19.vx.translation", "res://test_telemetry/run_2026-03-29T22-34-19.stage.translation", "res://test_telemetry/run_2026-03-29T22-34-19.Vc.translation", "res://test_telemetry/run_2026-03-29T22-34-19.I.translation", "res://test_telemetry/run_2026-03-29T22-34-19.F.translation", "res://test_telemetry/run_2026-03-29T22-34-19.Ff.translation", "res://test_telemetry/run_2026-03-29T22-34-19.Fd.translation", "res://test_telemetry/run_2026-03-29T22-34-19.Fm.translation", "res://test_telemetry/run_2026-03-29T22-34-19.event.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

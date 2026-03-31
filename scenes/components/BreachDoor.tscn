@@ -1,0 +1,49 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/breach_door.gd" id="1"]
+
+; Breach door — aluminum disc matching solenoid OD (~42mm), 10mm thick
+[sub_resource type="CylinderShape3D" id="1"]
+radius = 0.021
+height = 0.01
+
+[sub_resource type="CylinderMesh" id="2"]
+top_radius = 0.021
+bottom_radius = 0.021
+height = 0.01
+radial_segments = 32
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="3"]
+albedo_color = Color(0.60, 0.60, 0.62, 1)
+metallic = 0.4
+
+; N52 neodymium disc magnet — 20mm dia x 5mm
+[sub_resource type="CylinderMesh" id="4"]
+top_radius = 0.010
+bottom_radius = 0.010
+height = 0.005
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="5"]
+albedo_color = Color(0.72, 0.72, 0.74, 1)
+metallic = 0.85
+
+[node name="BreachDoor" type="StaticBody3D"]
+script = ExtResource("1")
+rotation = Vector3(0, 0, -1.5708)
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("1")
+
+[node name="DoorMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("2")
+surface_material_override/0 = SubResource("3")
+
+[node name="MagnetMesh" type="MeshInstance3D" parent="."]
+position = Vector3(0.008, 0, 0)
+mesh = SubResource("4")
+surface_material_override/0 = SubResource("5")

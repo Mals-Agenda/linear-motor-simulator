@@ -11,6 +11,8 @@
 [ext_resource type="Script" path="res://mcu.gd" id="9"]
 [ext_resource type="PackedScene" path="res://Battery.tscn" id="10"]
 [ext_resource type="PackedScene" path="res://HUD.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://TelemetryGraph.tscn" id="12"]
+[ext_resource type="Script" path="res://shot_recorder.gd" id="13"]
 
 [node name="CrossbowRig" type="Node3D"]
 
@@ -21,7 +23,7 @@ position = Vector3(-0.01, 0.0, 0.0)
 position = Vector3(1.25, 0.0, 0.0)
 
 [node name="Bolt" parent="." instance=ExtResource("1")]
-position = Vector3(0.45, 0.0, 0.0)
+position = Vector3(0.65, 0.0, 0.0)
 
 [node name="Solenoid0" parent="." instance=ExtResource("3")]
 position = Vector3(0.75, 0.0, 0.0)
@@ -37,11 +39,11 @@ from_path = NodePath("../PowerPack0")
 to_path = NodePath("../Solenoid0")
 
 [node name="Solenoid1" parent="." instance=ExtResource("3")]
-position = Vector3(1.75, 0.0, 0.0)
+position = Vector3(1.15, 0.0, 0.0)
 label = "Solenoid1"
 
 [node name="PowerPack1" parent="." instance=ExtResource("4")]
-position = Vector3(1.75, 0.45, 0.0)
+position = Vector3(1.15, 0.45, 0.0)
 label = "PowerPack1"
 
 [node name="Wire1" type="MeshInstance3D" parent="."]
@@ -54,19 +56,19 @@ position = Vector3(0.10, 0.0, 0.0)
 gate_label = "IRGate0Rear"
 
 [node name="IRGate0Front" parent="." instance=ExtResource("5")]
-position = Vector3(1.40, 0.0, 0.0)
+position = Vector3(0.90, 0.0, 0.0)
 gate_label = "IRGate0Front"
 
 [node name="IRGate1Trigger" parent="." instance=ExtResource("5")]
-position = Vector3(1.97, 0.0, 0.0)
+position = Vector3(1.05, 0.0, 0.0)
 gate_label = "IRGate1Trigger"
 
 [node name="IRGate1Front" parent="." instance=ExtResource("5")]
-position = Vector3(2.40, 0.0, 0.0)
+position = Vector3(1.30, 0.0, 0.0)
 gate_label = "IRGate1Front"
 
 [node name="Battery" parent="." instance=ExtResource("10")]
-position = Vector3(1.25, -0.28, 0.0)
+position = Vector3(0.95, -0.28, 0.0)
 
 [node name="MCU" type="Node" parent="."]
 script = ExtResource("9")
@@ -82,13 +84,9 @@ rotation = Vector3(-0.7854, 0.7854, 0)
 [node name="SimCtrl" type="Node" parent="."]
 script = ExtResource("7")
 
+[node name="ShotRecorder" type="Node" parent="."]
+script = ExtResource("13")
+
 [node name="HUD" parent="." instance=ExtResource("11")]
 
-[connection signal="beam_broken"   from="IRGate0Rear"    to="MCU" method="on_ir_gate0_rear_broken"]
-[connection signal="beam_restored" from="IRGate0Rear"    to="MCU" method="on_ir_gate0_rear_restored"]
-[connection signal="beam_broken"   from="IRGate0Front"   to="MCU" method="on_ir_gate0_front_broken"]
-[connection signal="beam_restored" from="IRGate0Front"   to="MCU" method="on_ir_gate0_front_restored"]
-[connection signal="beam_broken"   from="IRGate1Trigger" to="MCU" method="on_ir_gate1_trigger_broken"]
-[connection signal="beam_restored" from="IRGate1Trigger" to="MCU" method="on_ir_gate1_trigger_restored"]
-[connection signal="beam_broken"   from="IRGate1Front"   to="MCU" method="on_ir_gate1_front_broken"]
-[connection signal="beam_restored" from="IRGate1Front"   to="MCU" method="on_ir_gate1_front_restored"]
+[node name="TelemetryGraph" parent="." instance=ExtResource("12")]

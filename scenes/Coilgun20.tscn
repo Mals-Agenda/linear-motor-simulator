@@ -1,0 +1,166 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/components/BreachDoor.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/components/Bolt.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/components/BarrelSegment.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/components/Battery.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/ui/TelemetryGraph.tscn" id="6"]
+[ext_resource type="Script" path="res://scripts/mcu.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/sim_ctrl.gd" id="8"]
+[ext_resource type="Script" path="res://scripts/shot_recorder.gd" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/components/IRGateSegment.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://scenes/components/MCUBoard.tscn" id="11"]
+
+[node name="Coilgun20" type="Node3D"]
+
+[node name="BreachDoor" parent="." instance=ExtResource("1")]
+position = Vector3(-0.10, 0.0, 0.0)
+
+[node name="Bolt" parent="." instance=ExtResource("2")]
+position = Vector3(0.72, 0.0, 0.0)
+
+[node name="Segment0" parent="." instance=ExtResource("3")]
+position = Vector3(0.50, 0.0, 0.0)
+
+[node name="IRGateSegment0" parent="." instance=ExtResource("10")]
+position = Vector3(0.70, 0.0, 0.0)
+
+[node name="Segment1" parent="." instance=ExtResource("3")]
+position = Vector3(0.90, 0.0, 0.0)
+
+[node name="IRGateSegment1" parent="." instance=ExtResource("10")]
+position = Vector3(1.10, 0.0, 0.0)
+
+[node name="Segment2" parent="." instance=ExtResource("3")]
+position = Vector3(1.30, 0.0, 0.0)
+
+[node name="IRGateSegment2" parent="." instance=ExtResource("10")]
+position = Vector3(1.50, 0.0, 0.0)
+
+[node name="Segment3" parent="." instance=ExtResource("3")]
+position = Vector3(1.70, 0.0, 0.0)
+
+[node name="IRGateSegment3" parent="." instance=ExtResource("10")]
+position = Vector3(1.90, 0.0, 0.0)
+
+[node name="Segment4" parent="." instance=ExtResource("3")]
+position = Vector3(2.10, 0.0, 0.0)
+
+[node name="IRGateSegment4" parent="." instance=ExtResource("10")]
+position = Vector3(2.30, 0.0, 0.0)
+
+[node name="Segment5" parent="." instance=ExtResource("3")]
+position = Vector3(2.50, 0.0, 0.0)
+
+[node name="IRGateSegment5" parent="." instance=ExtResource("10")]
+position = Vector3(2.70, 0.0, 0.0)
+
+[node name="Segment6" parent="." instance=ExtResource("3")]
+position = Vector3(2.90, 0.0, 0.0)
+
+[node name="IRGateSegment6" parent="." instance=ExtResource("10")]
+position = Vector3(3.10, 0.0, 0.0)
+
+[node name="Segment7" parent="." instance=ExtResource("3")]
+position = Vector3(3.30, 0.0, 0.0)
+
+[node name="IRGateSegment7" parent="." instance=ExtResource("10")]
+position = Vector3(3.50, 0.0, 0.0)
+
+[node name="Segment8" parent="." instance=ExtResource("3")]
+position = Vector3(3.70, 0.0, 0.0)
+
+[node name="IRGateSegment8" parent="." instance=ExtResource("10")]
+position = Vector3(3.90, 0.0, 0.0)
+
+[node name="Segment9" parent="." instance=ExtResource("3")]
+position = Vector3(4.10, 0.0, 0.0)
+
+[node name="IRGateSegment9" parent="." instance=ExtResource("10")]
+position = Vector3(4.30, 0.0, 0.0)
+
+[node name="Segment10" parent="." instance=ExtResource("3")]
+position = Vector3(4.50, 0.0, 0.0)
+
+[node name="IRGateSegment10" parent="." instance=ExtResource("10")]
+position = Vector3(4.70, 0.0, 0.0)
+
+[node name="Segment11" parent="." instance=ExtResource("3")]
+position = Vector3(4.90, 0.0, 0.0)
+
+[node name="IRGateSegment11" parent="." instance=ExtResource("10")]
+position = Vector3(5.10, 0.0, 0.0)
+
+[node name="Segment12" parent="." instance=ExtResource("3")]
+position = Vector3(5.30, 0.0, 0.0)
+
+[node name="IRGateSegment12" parent="." instance=ExtResource("10")]
+position = Vector3(5.50, 0.0, 0.0)
+
+[node name="Segment13" parent="." instance=ExtResource("3")]
+position = Vector3(5.70, 0.0, 0.0)
+
+[node name="IRGateSegment13" parent="." instance=ExtResource("10")]
+position = Vector3(5.90, 0.0, 0.0)
+
+[node name="Segment14" parent="." instance=ExtResource("3")]
+position = Vector3(6.10, 0.0, 0.0)
+
+[node name="IRGateSegment14" parent="." instance=ExtResource("10")]
+position = Vector3(6.30, 0.0, 0.0)
+
+[node name="Segment15" parent="." instance=ExtResource("3")]
+position = Vector3(6.50, 0.0, 0.0)
+
+[node name="IRGateSegment15" parent="." instance=ExtResource("10")]
+position = Vector3(6.70, 0.0, 0.0)
+
+[node name="Segment16" parent="." instance=ExtResource("3")]
+position = Vector3(6.90, 0.0, 0.0)
+
+[node name="IRGateSegment16" parent="." instance=ExtResource("10")]
+position = Vector3(7.10, 0.0, 0.0)
+
+[node name="Segment17" parent="." instance=ExtResource("3")]
+position = Vector3(7.30, 0.0, 0.0)
+
+[node name="IRGateSegment17" parent="." instance=ExtResource("10")]
+position = Vector3(7.50, 0.0, 0.0)
+
+[node name="Segment18" parent="." instance=ExtResource("3")]
+position = Vector3(7.70, 0.0, 0.0)
+
+[node name="IRGateSegment18" parent="." instance=ExtResource("10")]
+position = Vector3(7.90, 0.0, 0.0)
+
+[node name="Segment19" parent="." instance=ExtResource("3")]
+position = Vector3(8.10, 0.0, 0.0)
+
+[node name="Battery" parent="." instance=ExtResource("4")]
+position = Vector3(4.30, -0.28, 0.0)
+
+[node name="MCUBoard" parent="." instance=ExtResource("11")]
+position = Vector3(4.30, -0.20, 0.15)
+
+[node name="MCU" type="Node" parent="."]
+script = ExtResource("7")
+stage_count = 20
+
+[node name="SimCtrl" type="Node" parent="."]
+script = ExtResource("8")
+
+[node name="ShotRecorder" type="Node" parent="."]
+script = ExtResource("9")
+
+[node name="HUD" parent="." instance=ExtResource("5")]
+
+[node name="TelemetryGraph" parent="." instance=ExtResource("6")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(4.30, 0.50, 1.50)
+rotation = Vector3(-0.30, 0.0, 0.0)
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.7854, 0.7854, 0.0)
